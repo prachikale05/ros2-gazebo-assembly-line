@@ -1,70 +1,85 @@
-# ROS 2 & Gazebo Automated Assembly Line
+# 🤖 Automated Assembly Line Using ROS 2 and Gazebo
 
-An automated assembly-line simulation developed using ROS 2 Humble and Gazebo 11. This project demonstrates conveyor control, sensor-based workpiece detection, and robotic pick-and-place operations.
+A simulated automated assembly line developed using **ROS 2 Humble and Gazebo Classic**. The system demonstrates conveyor-based workpiece transportation, sensor-based detection, robotic pick-and-place operations, and repeated workpiece handling.
 
-## Project Overview
+The project integrates robot control, conveyor movement, workpiece management, and trolley-based collection in a simulated industrial environment.
 
-The system simulates an industrial production line where workpieces travel along a conveyor, are detected by a sensor, and are picked up by a simulated industrial robot and placed into a trolley.
+## 📸 Project Demonstration
 
-The project combines robot motion control, gripper operation, conveyor management, and workpiece handling within a Gazebo simulation environment.
+### 1. Complete Assembly Line
 
-## Features
+![Assembly Line Overview](images/assembly_line_overview.png)
 
-- **Conveyor Control:** Controls conveyor movement in the simulation.
-- **Workpiece Detection:** Detects workpieces using a ROS 2 sensor node.
-- **Automatic Pick-and-Place:** Coordinates robot motion to pick up and place workpieces.
-- **Gripper Control:** Operates the simulated gripper during picking and releasing.
-- **Repeated Workpiece Cycle:** Supports automatic handling of successive workpieces.
-- **Gazebo Simulation:** Simulates the robot, conveyor, workpieces, trolley, and workstation.
-- **ROS 2 Integration:** Uses ROS 2 nodes, topics, controllers, and launch files.
+### 2. Assembly Line at Startup
 
-## Technologies Used
+![Assembly Line Startup](images/assembly_line_start.png)
+
+### 3. Conveyor and Workpiece Movement
+
+![Second Workpiece Arriving](images/second_workpiece_come.png)
+
+### 4. Robotic Pick Operation
+
+![Robot Picking Workpiece](images/robot_pick_operation.png)
+
+### 5. Workpiece Placement in Trolley
+
+![Robot Placing Workpiece](images/robot_trolley_placement.png)
+
+### 6. Completed Pick-and-Place Operation
+
+![Completed Pick and Place](images/completed_pick_place.png)
+
+### 7. Repeated Workpiece Handling
+
+![Second Workpiece Pick](images/second_piece_pick.png)
+
+## ✨ Key Features
+
+- Conveyor-based workpiece transportation in Gazebo.
+- Sensor-based workpiece detection.
+- Automatic conveyor stopping during the pick operation.
+- Industrial robotic arm simulation.
+- Gripper-controlled workpiece pickup and release.
+- Automated workpiece placement into a collection trolley.
+- Repeated workpiece spawning and handling.
+- ROS 2 nodes for coordinating conveyor movement, detection, and robot actions.
+
+## 🛠️ Technologies Used
+
+- **Operating System:** Ubuntu 22.04
+- **Robotics Middleware:** ROS 2 Humble
+- **Simulation:** Gazebo Classic 11
+- **Programming:** Python
+- **Robot Description:** URDF/Xacro
+- **Robot Control:** ROS 2 controllers and trajectory actions
+- **Communication:** ROS 2 topics and actions
+
+## 🏗️ System Workflow
+
+1. The conveyor transports a workpiece toward the detection area.
+2. The sensor detects the approaching workpiece.
+3. The conveyor stops when the workpiece reaches the pickup area.
+4. The robot moves to the pickup position.
+5. The gripper picks up the workpiece.
+6. The robot transports the workpiece to the trolley.
+7. The gripper releases the workpiece into the trolley.
+8. The system introduces another workpiece and repeats the cycle.
+
+## 📋 Prerequisites
+
+Before running the project, install and configure:
 
 - Ubuntu 22.04
 - ROS 2 Humble
-- Gazebo 11
-- Python
-- C++
-- URDF / Xacro
-- SDF
-- YAML
-- Git and GitHub
+- Gazebo Classic 11
+- Required ROS 2 packages and controllers used by this project
 
-## System Workflow
+## 🚀 Installation and Execution
 
-1. A workpiece moves along the conveyor.
-2. A sensor detects the workpiece.
-3. The conveyor stops for the pick-and-place operation.
-4. The robot approaches and picks up the workpiece.
-5. The robot carries the workpiece to the trolley.
-6. The gripper releases the workpiece.
-7. The system continues with the next workpiece cycle.
+### 1. Clone the Repository
 
-## Project Structure
-
-```text
-assembly_line/
-├── assembly_line/
-│   ├── automatic_pick_place.py
-│   ├── conveyor_workpiece.py
-│   ├── workpiece_controller.py
-│   └── workpiece_sensor.py
-├── config/
-├── description/
-│   ├── conveyor.urdf.xacro
-│   └── robot/
-├── launch/
-│   ├── factory.launch.py
-│   └── robot.launch.py
-├── models/
-│   ├── conveyor/
-│   ├── trolley/
-│   ├── workpiece/
-│   └── workstation1/
-├── plugins/
-│   └── gripper_hold_plugin.cpp
-├── worlds/
-│   └── factory.world
-├── package.xml
-├── setup.py
-└── README.md
+```bash
+mkdir -p ~/assembly_line_ws/src
+cd ~/assembly_line_ws/src
+git clone https://github.com/prachikale05/ros2-gazebo-assembly-line.git assembly_line
