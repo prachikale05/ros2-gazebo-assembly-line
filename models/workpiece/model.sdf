@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<sdf version="1.6">
+
+  <model name="workpiece">
+
+    <static>false</static>
+
+    <link name="workpiece_link">
+
+      <pose>0 0 0.15 0 0 0</pose>
+
+      <inertial>
+        <mass>0.5</mass>
+
+        <inertia>
+          <ixx>0.002</ixx>
+          <iyy>0.002</iyy>
+          <izz>0.002</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <collision name="collision">
+
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.3</size>
+          </box>
+        </geometry>
+        
+       <surface>
+        <friction>
+          <ode>
+            <mu>5.0</mu>
+            <mu2>5.0</mu2>
+          </ode>
+        </friction>
+
+        <contact>
+          <ode>
+            <kp>1000000</kp>
+            <kd>1000</kd>
+            <max_vel>0.01</max_vel>
+            <min_depth>0.001</min_depth>
+          </ode>
+        </contact>
+      </surface>
+
+      </collision>
+
+      <visual name="visual">
+
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.3</size>
+          </box>
+        </geometry>
+
+        <material>
+          <ambient>0.8 0.2 0.1 1</ambient>
+          <diffuse>0.8 0.2 0.1 1</diffuse>
+        </material>
+
+      </visual>
+
+    </link>
+    <plugin name="gripper_hold_plugin"
+        filename="/home/prachi/assembly_line_ws/src/assembly_line/plugins/libgripper_hold_plugin.so"/>
+
+  </model>
+
+</sdf>
