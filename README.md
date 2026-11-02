@@ -4,6 +4,7 @@
 ![Gazebo](https://img.shields.io/badge/Gazebo-Classic%2011-FF6F00)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.10-3776AB?logo=python&logoColor=white)
+![License](https://img.shields.io/badge/License-Apache%202.0-blue)
 
 A simulated industrial assembly line built with **ROS 2 Humble** and **Gazebo Classic**. Workpieces travel along a conveyor, are detected by a sensor, picked up by a robotic arm, and placed into a collection trolley. The cycle then repeats automatically with a new workpiece.
 
@@ -15,15 +16,16 @@ A simulated industrial assembly line built with **ROS 2 Humble** and **Gazebo Cl
 
 - [Demo](#-demo)
 - [Key Features](#-key-features)
-- [System Workflow](#-system-workflow)
+- [System Workflow](#️-system-workflow)
 - [Architecture](#-architecture)
-- [Technologies Used](#-technologies-used)
+- [Technologies Used](#️-technologies-used)
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
-- [Usage](#-usage)
+- [Usage](#️-usage)
 - [Project Structure](#-project-structure)
 - [Troubleshooting](#-troubleshooting)
 - [Future Improvements](#-future-improvements)
+- [License](#-license)
 - [Contributing](#-contributing)
 - [Author](#-author)
 
@@ -89,17 +91,24 @@ flowchart LR
 
 ## 🧩 Architecture
 
-The system is split into small, cooperating components:
+The project is a single ROS 2 Python package named **`assembly_line`**. It provides three executable nodes that cooperate through ROS 2 topics and actions, plus Gazebo models, a robot description, and launch files.
 
-| Component | Responsibility |
-|-----------|----------------|
-| Conveyor controller | Starts and stops conveyor movement |
-| Detection node | Publishes sensor events when a workpiece is in the pickup area |
-| Robot controller | Plans and executes pick-and-place motions via trajectory actions |
-| Gripper controller | Opens and closes the gripper |
-| Workpiece manager | Spawns and removes workpieces in Gazebo |
+| Node (executable) | Role |
+|-------------------|------|
+| `workpiece_controller` | Manages the workpiece and conveyor behavior |
+| `workpiece_sensor` | Detects when a workpiece reaches the pickup area |
+| `automatic_pick_place` | Runs the automatic pick-and-place sequence with the robot arm |
 
-<!-- TODO: Replace the names above with your actual node names and add the key topics/actions, e.g. /conveyor/cmd, /sensor/detected -->
+Supporting pieces:
+
+| Part | Description |
+|------|-------------|
+| `models/conveyor`, `models/workpiece`, `models/trolley` | Gazebo models for the conveyor, workpiece, and collection trolley |
+| `description/` | Xacro robot description (robot files in `description/robot/`) |
+| `worlds/` | Gazebo world files |
+| `config/` | Controller configuration |
+| `plugins/` | Custom Gazebo plugin sources |
+| `attach_workpiece.py` | Helper script for attaching the workpiece during pickup |
 
 ---
 
@@ -110,10 +119,11 @@ The system is split into small, cooperating components:
 | Operating System | Ubuntu 22.04 |
 | Middleware | ROS 2 Humble |
 | Simulation | Gazebo Classic 11 |
-| Language | Python |
+| Language | Python (`rclpy`) |
 | Robot Description | URDF / Xacro |
 | Control | ROS 2 controllers and trajectory actions |
 | Communication | ROS 2 topics and actions |
+| Message packages | `std_msgs`, `geometry_msgs`, `sensor_msgs` |
 
 ---
 
@@ -138,7 +148,7 @@ sudo apt install -y \
   python3-rosdep
 ```
 
-<!-- TODO: Add any extra packages your project needs. -->
+The package itself depends on `rclpy`, `std_msgs`, `geometry_msgs`, `sensor_msgs`, and `ament_index_python`, which `rosdep` installs for you in the next section.
 
 ---
 
@@ -156,19 +166,19 @@ git clone https://github.com/prachikale05/ros2-gazebo-assembly-line.git assembly
 
 ```bash
 cd ~/assembly_line_ws
+source /opt/ros/humble/setup.bash
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
 ### 3. Build the workspace
 
 ```bash
-colcon build --symlink-install
+colcon build --symlink-install --packages-select assembly_line
 ```
 
 ### 4. Source the workspace
 
 ```bash
-source /opt/ros/humble/setup.bash
 source ~/assembly_line_ws/install/setup.bash
 ```
 
@@ -176,15 +186,35 @@ source ~/assembly_line_ws/install/setup.bash
 
 ## ▶️ Usage
 
-Launch the simulation:
+Launch the simulation using one of the launch files in the `launch/` folder:
 
 ```bash
-ros2 launch <your_package_name> <your_launch_file>.launch.py
+ros2 launch assembly_line <launch_file_name>.launch.py
 ```
 
-<!-- TODO: Replace the placeholders above with your real package and launch file names. -->
+To see the available launch files:
 
-Once launched, you should see the conveyor start, the first workpiece approach the sensor, and the robot perform the pick-and-place cycle automatically.
+```bash
+ls ~/assembly_line_ws/src/assembly_line/launch
+```
+
+Once launched, the conveyor starts, the first workpiece approaches the sensor, and the robot performs the pick-and-place cycle automatically.
+
+You can also run the individual nodes in separate terminals (after sourcing the workspace):
+
+```bash
+ros2 run assembly_line workpiece_controller
+ros2 run assembly_line workpiece_sensor
+ros2 run assembly_line automatic_pick_place
+```
+
+Useful commands for inspecting the running system:
+
+```bash
+ros2 node list
+ros2 topic list
+ros2 control list_controllers
+```
 
 ---
 
@@ -192,16 +222,24 @@ Once launched, you should see the conveyor start, the first workpiece approach t
 
 ```text
 assembly_line/
-├── images/          # Screenshots used in this README
-├── launch/          # Launch files
-├── urdf/            # Robot, conveyor, and trolley descriptions
-├── worlds/          # Gazebo world files
-├── config/          # Controller configuration
-├── scripts/         # ROS 2 Python nodes
+├── assembly_line/          # Python package with the ROS 2 nodes
+├── config/                 # Controller configuration
+├── description/            # Xacro robot description (robot/ subfolder)
+├── images/                 # Screenshots used in this README
+├── launch/                 # Launch files
+├── models/                 # Gazebo models (conveyor, workpiece, trolley)
+├── plugins/                # Custom Gazebo plugins
+├── resource/               # ament resource index marker
+├── scripts/                # Helper scripts
+├── test/                   # Linting and unit tests
+├── worlds/                 # Gazebo world files
+├── attach_workpiece.py     # Workpiece attach helper
+├── CMakeLists.txt
+├── package.xml
+├── setup.cfg
+├── setup.py
 └── README.md
 ```
-
-<!-- TODO: Adjust this tree to match your actual folders. -->
 
 ---
 
@@ -210,8 +248,9 @@ assembly_line/
 | Problem | Possible fix |
 |---------|--------------|
 | Gazebo opens with a black screen or crashes | Kill stale processes: `killall gzserver gzclient`, then relaunch |
-| Package not found | Re-source the workspace: `source install/setup.bash` |
-| Controllers fail to load | Confirm `ros2_control` and controller packages are installed, then check the controller config file |
+| `Package 'assembly_line' not found` | Re-source the workspace: `source ~/assembly_line_ws/install/setup.bash` |
+| Models do not appear in Gazebo | Rebuild with `colcon build --symlink-install` and confirm the `models/` folder was installed |
+| Controllers fail to load | Confirm `ros2_control` and controller packages are installed, then check the files in `config/` |
 | Robot does not move | Check that controllers are active: `ros2 control list_controllers` |
 
 ---
@@ -226,6 +265,12 @@ assembly_line/
 
 ---
 
+## 📄 License
+
+This project is licensed under the **Apache License 2.0**.
+
+---
+
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome. Feel free to open an issue or submit a pull request.
@@ -236,5 +281,3 @@ Contributions, issues, and feature requests are welcome. Feel free to open an is
 
 **Prachi Kale**
 GitHub: [@prachikale05](https://github.com/prachikale05)
-
-<!-- TODO: Add a LICENSE file and mention it here, e.g. "This project is licensed under the MIT License." -->
